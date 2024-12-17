@@ -34,7 +34,7 @@ app.get("/overview/:symbol", async (req, res) => {
   }
 });
 
-app.get("/:symbol", async (req, res) => {
+app.get("/company/:symbol", async (req, res) => {
   const cacheKey = `cached_data_${req.params.symbol}`;
 
   try {
