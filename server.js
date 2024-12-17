@@ -18,7 +18,7 @@ app.get("/top-gainers-losers", async (req, res) => {
   try {
     const cachedData = await redisClient.get(cacheKey);
     if (cachedData) {
-      return res.json(cachedData);
+      return res.json(JSON.parse(cachedData));
     }
 
     const response = await fetch(
