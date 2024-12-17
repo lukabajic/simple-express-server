@@ -35,7 +35,7 @@ app.get("/overview/:symbol", async (req, res) => {
 });
 
 app.get("/:symbol", async (req, res) => {
-  const cacheKey = "cached_data_single";
+  const cacheKey = `cached_data_${req.params.symbol}`;
 
   try {
     const cachedData = await redisClient.get(cacheKey);
@@ -48,9 +48,18 @@ app.get("/:symbol", async (req, res) => {
     );
     const responseData = await response.json();
 
-    await redisClient.setEx(cacheKey, 24 * 3600, JSON.stringify(responseData));
+    const responseOverview = await fetch(
+      `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.symbol}&apikey=2US4HJM8F2O5DW2R`
+    );
+    const responseDataOverview = await responseOverview.json();
 
-    return res.json(responseData);
+    await redisClient.setEx(
+      cacheKey,
+      24 * 3600,
+      JSON.stringify({ ...responseData, ...responseDataOverview })
+    );
+
+    return res.json({ ...responseData, ...responseDataOverview });
   } catch (err) {
     return res.status(500).json({ error: "Something went wrong" });
   }
