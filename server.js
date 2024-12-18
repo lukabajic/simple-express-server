@@ -12,8 +12,8 @@ redisClient.connect().catch(console.error);
 redisClient.on("error", (err) => console.log("Redis Error:", err));
 redisClient.on("connect", () => console.log("Connected to Redis"));
 
-app.get("/overview/:symbol", async (req, res) => {
-  const cacheKey = "cached_data_company";
+app.get("/articles", async (req, res) => {
+  const cacheKey = "articles";
 
   try {
     const cachedData = await redisClient.get(cacheKey);
@@ -22,7 +22,7 @@ app.get("/overview/:symbol", async (req, res) => {
     }
 
     const response = await fetch(
-      `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.symbol}&apikey=2US4HJM8F2O5DW2R`
+      `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&apikey=2US4HJM8F2O5DW2R`
     );
     const responseData = await response.json();
 
